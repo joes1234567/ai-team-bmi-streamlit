@@ -61,6 +61,27 @@ def test_calculate_bmi_error_message_height_exact():
 
 
 # ──────────────────────────────────────────────
+# calculate_bmi：小正數輸入（0 < x <= 1）正向驗證（BUG-T008-001）
+# ──────────────────────────────────────────────
+# 目的：kill mut_2（weight_kg <= 0 → <= 1）與 mut_5（height_m <= 0 → <= 1）
+# 設計：若實作把 <= 0 改成 <= 1、下面測試會因 raise ValueError 而失敗
+
+def test_calculate_bmi_small_positive_weight_does_not_raise():
+    """weight_kg=1.0, height_m=1.0 應回傳 1.0，不可 raise（kill mut_2）。"""
+    assert calculate_bmi(1.0, 1.0) == 1.0
+
+
+def test_calculate_bmi_small_positive_height_does_not_raise():
+    """weight_kg=10.0, height_m=1.0 應回傳 10.0，不可 raise（kill mut_5）。"""
+    assert calculate_bmi(10.0, 1.0) == 10.0
+
+
+def test_calculate_bmi_fractional_weight_and_height():
+    """weight=0.5, height=0.5 應回傳 2.0（0.5 / 0.25），驗證小於 1 的輸入也正常。"""
+    assert calculate_bmi(0.5, 0.5) == 2.0
+
+
+# ──────────────────────────────────────────────
 # classify_bmi：四分類各一例
 # ──────────────────────────────────────────────
 
